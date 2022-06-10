@@ -10,7 +10,7 @@ class Oracle:
     def getOracle(self, x):
 
         if self.type == "strongly convex":
-            return np.power(x, 2), 2 * x
+            return np.linalg.norm(np.power(x, 2)), 2 * x
         
     def getMin(self):
         
