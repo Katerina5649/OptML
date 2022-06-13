@@ -3,7 +3,17 @@ from numpy import array
 from numpy.linalg import norm
 import matplotlib.pyplot as plt
 
-def accuracy_check(function_type, x, f_list, grad_f_list, x_star, f_star, mu, W):
+
+def plotError(T, temp):
+    
+    m = np.linspace(0, T, num = T)
+    plt.semilogy(m, temp)
+    plt.xlabel("Iteration")
+    plt.ylabel("Error")
+    plt.show()
+    
+    
+def accuracy_check(function_type, x, oracle, x_star, f_star, mu, W):
 #for function type, 0 stands for non-convex, 1 stands for convex and 2 stands for strongly convex
 #if function is not stronly convex, input -1 for mu
     (maxiter, params, nodes) = x.shape
@@ -13,53 +23,42 @@ def accuracy_check(function_type, x, f_list, grad_f_list, x_star, f_star, mu, W)
         for i in range (params):
             x_bar[t][i] = x[t][i].mean(axis = 0)
     
-    if function_type == 0:
+    if function_type == "non convex":
         temp = [0] * T;
         for t in range(0, T):
             temp2 = 0
             expf = 0
-            for grad_f in grad_f_list:
-                expf = expf + np.power(norm(grad_f(x_bar[t]), 2), 2)
-            expf = expf / len(f_list)
+            _, grad_f = oracle(x_bar[t])
+            expf = expf + np.power(norm(grad_f, 2), 2)
             temp[t] = (t > 0)*temp[t-1]+ expf
             temp[t] = temp[t] / (t + 1)
-        print(temp[1])
         
-        m = np.linspace(0, T, num = T)
-        plt.plot(temp, m)
-        plt.show()
+        plotError(T, temp)
             
-    elif function_type == 1:
+    elif function_type == "convex":
         temp = [0] * T;
         for t in range(0, T):
             temp2 = 0
             expf = 0
-            for f in f_list:
-                expf = expf + (f(x_bar[t]) - f_star)
-            expf = expf / len(f_list)
+            f, _ = oracle(x_bar[t])
+            expf = expf + (f - f_star)
             temp[t] = (t > 0)*temp[t-1]+ expf
             temp[t] = temp[t] / (t + 1)
-        print(temp[1])
         
-        m = np.linspace(0, T, num = T)
-        plt.plot(temp, m)
-        plt.show()
+        plotError(T, temp)
             
-    elif function_type == 2:
+    elif function_type == "strongly convex":
         temp = [0] * T;
         for t in range(0, T):
             temp2 = 0
             expf = 0
-            for f in f_list:
+            f, _ = oracle(x_bar[t])
                 #(W[t] > 0) * W[t] / W[T] *
-                expf = expf + (f(x_bar[t]) - f_star)
-            expf = expf / len(f_list)
+            expf = expf + (f - f_star)
             temp[t] = (t > 0)*temp[t-1]+ expf + mu * np.power(norm(x_bar[T] - x_star, 2), 2)
             temp[t] = temp[t] / (t + 1)
         
-        m = np.linspace(0, T, num = T)
-        plt.plot(temp, m)
-        plt.show()
+        plotError(T, temp)
         
     else:
         print("Wrong argument.")

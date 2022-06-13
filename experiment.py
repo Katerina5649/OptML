@@ -51,6 +51,8 @@ def toMatrix(size, adj_list):
             matrix[neighbor, node] = 1
             
     return matrix.astype(np.float64)
+
+
 nodes = 4
 params = 6
 shape = (params, nodes)
