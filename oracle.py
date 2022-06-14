@@ -8,18 +8,21 @@ class Oracle:
         self.n_params = n_params
         self.n_nodes = n_nodes
         
-    
-    def getOracle(self, x):
-
         if self.type == "strongly convex":
-            return np.power(np.linalg.norm(x), 2), 2 * x
+            self.func = lambda x: (np.power(np.linalg.norm(x), 2), 2 * x)
+            self.min = np.zeros((self.n_params, self.n_nodes))
+        
+        elif self.type == "convex":
+            a = 0.75
+            y = np.random.uniform(0, 5, (x.shape[0], 1))
+            
+            self.func = lambda x: (0.5 * np.power(np.linalg.norm(x * a - y), 2), a * (x * a - y)) ## really not sure
+            self.min = y / a
         
     def getMin(self):
-        
-        if self.type == "strongly convex":
-            return np.zeros((self.n_params, self.n_nodes))
+        return self.min
         
     def __call__(self, x):
-        return self.getOracle(x)
+        return self.func(x)
         
     

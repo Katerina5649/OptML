@@ -13,7 +13,7 @@ def plotError(T, temp):
     plt.show()
     
     
-def accuracy_check(function_type, x, oracle, x_star, f_star, mu, W):
+def accuracy_check(function_type, x, oracle, x_star, f_star, mu, W, plot=True):
 #for function type, 0 stands for non-convex, 1 stands for convex and 2 stands for strongly convex
 #if function is not stronly convex, input -1 for mu
     (maxiter, params, nodes) = x.shape
@@ -33,7 +33,10 @@ def accuracy_check(function_type, x, oracle, x_star, f_star, mu, W):
             temp[t] = (t > 0)*temp[t-1]+ expf
             temp[t] = temp[t] / (t + 1)
         
-        plotError(T, temp)
+        if plot:
+            plotError(T, temp)
+        
+        return temp
             
     elif function_type == "convex":
         temp = [0] * T;
@@ -45,7 +48,10 @@ def accuracy_check(function_type, x, oracle, x_star, f_star, mu, W):
             temp[t] = (t > 0)*temp[t-1]+ expf
             temp[t] = temp[t] / (t + 1)
         
-        plotError(T, temp)
+        if plot:
+            plotError(T, temp)
+        
+        return temp
             
     elif function_type == "strongly convex":
         temp = [0] * T;
@@ -58,7 +64,10 @@ def accuracy_check(function_type, x, oracle, x_star, f_star, mu, W):
             temp[t] = (t > 0)*temp[t-1]+ expf + mu * np.power(norm(x_bar[T] - x_star, 2), 2)
             temp[t] = temp[t] / (t + 1)
         
-        plotError(T, temp)
+        if plot:
+            plotError(T, temp)
+        
+        return temp
         
     else:
         print("Wrong argument.")
