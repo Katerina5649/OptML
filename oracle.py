@@ -9,19 +9,33 @@ class Oracle:
         self.n_nodes = n_nodes
         
         if self.type == "strongly convex":
-            self.func = lambda x: (np.power(np.linalg.norm(x), 2), 2 * x)
-            self.min = np.zeros((self.n_params, self.n_nodes))
+            
+            f = lambda col: np.power(np.linalg.norm(col, 2), 2)
+            df = lambda col: 2 * col
+            
+            self.func = lambda X: (np.apply_along_axis(f, 0, X), np.apply_along_axis(df, 0, X))
+            
+            self.x_star = np.zeros((self.n_params, 1))
+            self.f_star = 0.
         
         elif self.type == "convex":
-            a = 0.75
-            y = np.random.uniform(0, 5, (x.shape[0], 1))
             
-            self.func = lambda x: (0.5 * np.power(np.linalg.norm(x * a - y), 2), a * (x * a - y)) ## really not sure
-            self.min = y / a
+            a = 0.75
+            y = np.random.uniform(0, 5, (self.n_params, 1))
+            f = lambda col: 0.5 * np.power(np.linalg.norm(col * a - y, 2), 2)
+            df = lambda col: np.squeeze(a * (np.expand_dims(col, axis=1) * a - y), axis=1)
+            
+            self.func = lambda X: (np.apply_along_axis(f, 0, X), np.apply_along_axis(df, 0, X))
+            
+            self.x_star = y / a
+            self.f_star = 0.
         
     def getMin(self):
-        return self.min
-        
+        return self.x_star, self.f_star
+    
+    def getMu(self):
+        return -1 if (self.type != "strongly convex") else 0.5
+         
     def __call__(self, x):
         return self.func(x)
         

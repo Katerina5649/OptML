@@ -18,11 +18,11 @@ def accuracy_check(function_type, x, oracle, x_star, f_star, mu, W, plot=True):
 #if function is not stronly convex, input -1 for mu
     (maxiter, params, nodes) = x.shape
     T = maxiter - 1
-    x_bar = np.zeros((maxiter, params, nodes))
+    x_bar = np.zeros((maxiter, params, 1))
     for t in range(maxiter):
         for i in range (params):
             x_bar[t][i] = x[t][i].mean(axis = 0)
-    
+            
     if function_type == "non convex":
         temp = [0] * T;
         for t in range(0, T):
@@ -44,10 +44,10 @@ def accuracy_check(function_type, x, oracle, x_star, f_star, mu, W, plot=True):
             temp2 = 0
             expf = 0
             f, _ = oracle(x_bar[t])
-            expf = expf + (f - f_star)
+            expf = expf + (f[0] - f_star)
             temp[t] = (t > 0)*temp[t-1]+ expf
             temp[t] = temp[t] / (t + 1)
-        
+
         if plot:
             plotError(T, temp)
         
