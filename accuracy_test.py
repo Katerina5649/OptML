@@ -71,3 +71,44 @@ def accuracy_check(function_type, x, oracle, x_star, f_star, mu, W, plot=True):
         
     else:
         print("Wrong argument.")
+        
+def accuracy_check_iter(x, current_sum, t, oracle, x_T=None):
+#if function is not stronly convex, input -1 for mu
+    
+    x_star, f_star = oracle.getMin()
+    mu = oracle.getMu()
+    function_type = oracle.getType()
+    
+    x_bar = np.expand_dims(np.mean(x, axis=1), axis=1)
+    
+    if function_type == "non convex":
+        
+        _, grad_f = oracle(x_bar)
+        current_sum += np.power(norm(grad_f, 2), 2)
+        error = current_sum / (t + 1)
+        
+        return error, current_sum
+        
+            
+    elif function_type == "convex":
+        
+        f, _ = oracle(x_bar)
+        current_sum += (f[0] - f_star)
+        error = current_sum / (t + 1)
+        
+        return error, current_sum
+            
+    elif function_type == "strongly convex":
+        
+        f, _ = oracle(x_bar)
+        
+        current_sum += (f[0] - f_star)
+        x_bar_T = np.expand_dims(np.mean(x_T, axis=1), axis=1)
+        additional_term = mu * np.power(norm(x_bar_T - x_star, 2), 2)
+        
+        error = current_sum / (t + 1) + additional_term
+        
+        return error, current_sum
+        
+    else:
+        print("Wrong argument.")

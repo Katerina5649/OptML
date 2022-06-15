@@ -35,6 +35,9 @@ class Oracle:
     
     def getMu(self):
         return -1 if (self.type != "strongly convex") else 0.5
+    
+    def getType(self):
+        return self.type
          
     def __call__(self, x):
         return self.func(x)
