@@ -26,10 +26,10 @@ def accuracy_check(function_type, x, oracle, x_star, f_star, mu, W, plot=True):
     if function_type == "non convex":
         temp = [0] * T;
         for t in range(0, T):
-            temp2 = 0
-            expf = 0
+            
             _, grad_f = oracle(x_bar[t])
-            expf = expf + np.power(norm(grad_f, 2), 2)
+            
+            expf = np.power(norm(grad_f, 2), 2)
             temp[t] = (t > 0)*temp[t-1]+ expf
             temp[t] = temp[t] / (t + 1)
         
@@ -73,7 +73,6 @@ def accuracy_check(function_type, x, oracle, x_star, f_star, mu, W, plot=True):
         print("Wrong argument.")
         
 def accuracy_check_iter(x, current_sum, t, oracle, x_T=None):
-#if function is not stronly convex, input -1 for mu
     
     x_star, f_star = oracle.getMin()
     mu = oracle.getMu()
@@ -112,3 +111,11 @@ def accuracy_check_iter(x, current_sum, t, oracle, x_T=None):
         
     else:
         print("Wrong argument.")
+        
+        
+def accuracy_check_err(x, x_star):
+    
+    difference = x - x_star
+    norm_squared = np.power(np.linalg.norm(difference, ord=2, axis=0), 2)
+    
+    return 1 / x.shape[1] * np.sum(norm_squared)
