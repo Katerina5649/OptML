@@ -29,6 +29,10 @@ class Oracle:
             
             self.x_star = y / a
             self.f_star = 0.
+            
+        elif self.type == "non convex":
+            self.func = lambda x: (np.log(x**2 + 2), 2*x/(x**2 + 2))
+            self.min = 0
         
     def getMin(self):
         return self.x_star, self.f_star
