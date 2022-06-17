@@ -19,20 +19,20 @@ class Oracle:
         
         elif self.type == "convex":
             
-            f = lambda col: np.power(col, 4)
+            f = lambda col: np.sum(np.power(col, 4))
             df = lambda col: 4 * np.power(col, 3)
             
             self.func = lambda X: (np.apply_along_axis(f, 0, X), np.apply_along_axis(df, 0, X))
             
             self.x_star = np.zeros((self.n_params, 1))
-            self.f_star = np.zeros((self.n_params, 1))
+            self.f_star = 0.
             
         elif self.type == "non convex":
             
-            self.func = lambda x: (np.log(x**2 + 2), np.divide(2*x, (x**2 + 2)))
+            self.func = lambda x: (np.sum(np.log(x**2 + 2)), np.divide(2*x, (x**2 + 2)))
             
             self.x_star = np.zeros((self.n_params, 1))
-            self.f_star = np.ones((self.n_params, 1)) * np.log(2)
+            self.f_star = self.n_params * np.log(2)
             
     def getMin(self):
         return self.x_star, self.f_star
