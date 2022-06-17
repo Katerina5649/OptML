@@ -19,15 +19,13 @@ class Oracle:
         
         elif self.type == "convex":
             
-            a = 0.75
-            y = np.random.uniform(0, 5, (self.n_params, 1))
-            f = lambda col: 0.5 * np.power(np.linalg.norm(np.expand_dims(col, axis=1) * a - y, 2), 2)    
-            df = lambda col: np.squeeze(a * (np.expand_dims(col, axis=1) * a - y), axis=1)
+            f = lambda col: np.power(col, 4)
+            df = lambda col: 4 * np.power(col, 3)
             
             self.func = lambda X: (np.apply_along_axis(f, 0, X), np.apply_along_axis(df, 0, X))
             
-            self.x_star = y / a
-            self.f_star = 0.
+            self.x_star = np.zeros((self.n_params, 1))
+            self.f_star = np.zeros((self.n_params, 1))
             
         elif self.type == "non convex":
             
