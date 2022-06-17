@@ -12,19 +12,25 @@ def error_vs_iter_func(n_nodes, n_params, topology, lr, max_iter, threshold):
     
     x0 = np.random.randn(n_params, n_nodes)
     W = buildTopology(n_nodes, topology)
-    oracle = Oracle('strongly convex', n_params, n_nodes)
+    oracle = Oracle('strongly convex', n_params)
     itr1, errors1 = decentralizedSGD(x0, lr, max_iter, threshold, W, oracle)
     
     x1 = np.linspace(0, itr1, num = len(errors1))
     ax.plot(x1, errors1, label = 'strongly convex')
     
     x0 = np.random.randn(n_params, n_nodes)
-    W = buildTopology(n_nodes, topology)
-    oracle = Oracle("convex", n_params, n_nodes)
+    oracle = Oracle("convex", n_params)
     itr2, errors2 = decentralizedSGD(x0, lr, max_iter, threshold, W, oracle)
     
     x2 = np.linspace(0, itr2, num = len(errors2))
     ax.plot(x2, errors2, label = 'convex')
+    
+    x0 = np.random.randn(n_params, n_nodes)
+    oracle = Oracle("non convex", n_params)
+    itr3, errors3 = decentralizedSGD(x0, lr, max_iter, threshold, W, oracle)
+    
+    x3 = np.linspace(0, itr2, num = len(errors2))
+    ax.plot(x3, errors3, label = 'non convex')
     
     ax.axhline(y = 1e-5, color = 'r', linestyle = 'dashed')
     
@@ -42,7 +48,7 @@ def error_vs_iter_topology(n_nodes, n_params, func_type, lr, max_iter, threshold
     
     x0 = np.random.randn(n_params, n_nodes)
     W = buildTopology(n_nodes, "dense")
-    oracle = Oracle(func_type, n_params, n_nodes)
+    oracle = Oracle(func_type, n_params)
     itr1, errors1 = decentralizedSGD(x0, lr, max_iter, threshold, W, oracle)
     
     x1 = np.linspace(0, itr1, num = len(errors1))
@@ -50,7 +56,7 @@ def error_vs_iter_topology(n_nodes, n_params, func_type, lr, max_iter, threshold
     
     x0 = np.random.randn(n_params, n_nodes)
     W = buildTopology(n_nodes, "centralized")
-    oracle = Oracle(func_type, n_params, n_nodes)
+    oracle = Oracle(func_type, n_params)
     itr2, errors2 = decentralizedSGD(x0, lr, max_iter, threshold, W, oracle)
     x2 = np.linspace(0, itr2, num = len(errors2))
     
@@ -61,7 +67,7 @@ def error_vs_iter_topology(n_nodes, n_params, func_type, lr, max_iter, threshold
     
     x0 = np.random.randn(n_params, n_nodes)
     W = buildTopology(n_nodes, "ring")
-    oracle = Oracle(func_type, n_params, n_nodes)
+    oracle = Oracle(func_type, n_params)
     itr3, errors3 = decentralizedSGD(x0, lr, max_iter, threshold, W, oracle)
     x3 = np.linspace(0, itr3, num = len(errors3))
     
@@ -85,7 +91,7 @@ num_nodes = random.randint(10,50)
 error_vs_iter_topology(num_nodes, n_params, func_type, lr, max_iter, threshold)
 '''
 n_params = 10
-topology = "ring"
+topology = "dense"
 max_iter = 10000
 lr = 1e-4
 threshold = 0.5e-5
